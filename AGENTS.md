@@ -128,6 +128,14 @@ Practical checklist for any change impacting core logic or public APIs
 - Tests: Add Enterprise-specific specs under `spec/enterprise`, mirroring OSS spec layout where applicable.
 - When modifying existing OSS features for Enterprise-only behavior, add an Enterprise module (via `prepend_mod_with`/`include_mod_with`) instead of editing OSS files directly—especially for policies, controllers, and services. For Enterprise-exclusive features, place code directly under `enterprise/`.
 
+## Cursor Cloud specific instructions
+
+- Ruby 3.4.4 lives in `/usr/local/ruby` and Node 24.13.0 with pnpm 10.2.0 lives in `/usr/local/node`. Login shells prepend both. The image default Node is 22, which does not match `.nvmrc`.
+- On boot, Postgres 16 and Redis listen on localhost. Postgres user `postgres`, password `postgres`, development database `chatwoot_dev`. `policy-rc.d` can block `service` helpers; start Postgres with `sudo pg_ctlcluster 16 main start`.
+- Boot then runs `bundle exec rails db:chatwoot_prepare` and `overmind start -f Procfile.dev` (Rails on port 3000, Vite on 3036, Sidekiq).
+- `.env` is created from `.env.example` with localhost Redis, Postgres, and SMTP hosts. Leave it uncommitted.
+- Seeded login is `john@acme.inc` / `Password1!` (Super Admin on Acme Inc). Account signup is disabled.
+
 ## Branding / White-labeling note
 
 - For user-facing strings that currently contain "Chatwoot" but should adapt to branded/self-hosted installs, prefer applying `replaceInstallationName` from `shared/composables/useBranding` in the UI layer (for example tooltip and suggestion labels) instead of adding hardcoded brand-specific copy.
